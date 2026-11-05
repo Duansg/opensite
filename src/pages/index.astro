@@ -1,0 +1,110 @@
+---
+import Base from '../layouts/Base.astro';
+import PostCard from '../components/PostCard.astro';
+import Sidebar from '../components/Sidebar.astro';
+import Icon from '../components/Icon.astro';
+import { getPosts } from '../lib/posts';
+import { categories } from '../config';
+const posts = await getPosts();
+const featured = posts.find((post) => post.data.featured) || posts[0];
+const latest = posts.filter((post) => post.id !== featured?.id).slice(0, 4);
+const topics = categories.filter((category) =>
+  posts.some((post) => post.data.category === category),
+);
+const ticker = [
+  'CODE. CREATE. REPEAT.',
+  '保持好奇',
+  'A LITTLE BIT OF EVERYTHING',
+  'THINK IN PIXELS',
+  '自由生长',
+  'BUILT ON THE OPEN WEB',
+];
+---
+
+<Base>
+  <section class="hero sky-grid" aria-labelledby="hero-title">
+    <div class="wrap hero-inner">
+      <div class="hero-copy">
+        <span class="kicker label">
+          <b>HELLO</b> WELCOME TO MY CORNER OF THE WEB
+        </span>
+        <h1 id="hero-title">
+          <span>OPEN</span>
+          <span class="outline">MIND.</span>
+        </h1>
+        <p class="hero-intro">
+          代码、设计，和一些不设限的想法。
+          <br />
+          把探索写成故事，让灵感自由生长。
+          <br />
+          欢迎来到我的互联网自留地。
+        </p>
+        <div class="hero-stats">
+          <div>
+            <b>{String(posts.length).padStart(2, '0')}</b>
+            <span>STORIES</span>
+          </div>
+          <div>
+            <b>{String(topics.length).padStart(2, '0')}</b>
+            <span>TOPICS</span>
+          </div>
+          <div>
+            <b>∞</b>
+            <span>CURIOSITY</span>
+          </div>
+        </div>
+      </div>
+      <div class="hero-stage">
+        <span class="stage-hint label">MOVE TO SCATTER</span>
+        <span class="stage-id label px-corners">HUMAN #0001</span>
+        <canvas
+          id="pixel-portrait"
+          width="520"
+          height="520"
+          aria-label="鼠标移动时散开又聚拢的原创像素人物"
+        ></canvas>
+        <span class="stage-note label">✳ IDEAS HAVE NO LIMITS</span>
+      </div>
+    </div>
+  </section>
+  <div class="ticker" aria-hidden="true">
+    <div class="ticker-row">
+      {[...ticker, ...ticker].map((text) => (
+        <span>{text}</span>
+      ))}
+    </div>
+  </div>
+  <section class="wrap section" aria-labelledby="latest-title">
+    <div class="section-head">
+      <div>
+        <span class="label">NOTES FROM THE DIGITAL GARDEN / 最新文章</span>
+        <h2 id="latest-title">
+          THE LATEST<span class="sky-dot">.</span>
+          <sup class="count">({String(posts.length).padStart(2, '0')})</sup>
+        </h2>
+      </div>
+      <p>
+        有用的经验，有趣的发现。
+        <br />
+        还有正在生长的想法。
+      </p>
+    </div>
+    <div class="content-layout">
+      <div class="post-grid">
+        {featured && <PostCard post={featured} featured />}
+        {latest.map((post) => (
+          <PostCard post={post} />
+        ))}
+        <a class="all-posts" href="/blog/">
+          探索全部文章 <span>{String(posts.length).padStart(2, '0')} STORIES & COUNTING</span>
+          <Icon name="arrow" />
+        </a>
+      </div>
+      <Sidebar />
+    </div>
+  </section>
+</Base>
+<script>
+  import { initPixelPortrait } from '../scripts/pixel-portrait';
+  initPixelPortrait();
+</script>

@@ -1,0 +1,40 @@
+---
+import Base from '../../layouts/Base.astro';
+import PostCard from '../../components/PostCard.astro';
+import Sidebar from '../../components/Sidebar.astro';
+import { getPosts } from '../../lib/posts';
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return [...new Set(posts.flatMap((post) => post.data.tags))].map((tag) => ({
+    params: { tag },
+    props: { tag, posts: posts.filter((post) => post.data.tags.includes(tag)) },
+  }));
+}
+const { tag, posts } = Astro.props;
+---
+
+<Base title={`标签：${tag}`}>
+  <section class="page-hero sky-grid">
+    <div class="wrap">
+      <span class="label">CONNECTED BY A COMMON THREAD / 标签</span>
+      <h1 class="page-heading">
+        #{tag}
+        <span class="outline">.</span>
+      </h1>
+      <p>{posts.length} 篇相关文章，顺着一个关键词继续探索。</p>
+    </div>
+  </section>
+  <section class="wrap section">
+    <div class="content-layout">
+      <div class="post-grid">
+        {posts.map((post) => (
+          <PostCard post={post} />
+        ))}
+        <a class="all-posts" href="/blog/">
+          ← 返回全部文章
+        </a>
+      </div>
+      <Sidebar />
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,53 @@
+---
+import Base from '../layouts/Base.astro';
+import Sidebar from '../components/Sidebar.astro';
+import Icon from '../components/Icon.astro';
+import { getPosts, postUrl } from '../lib/posts';
+const posts = await getPosts();
+const years = [...new Set(posts.map((post) => post.data.date.getUTCFullYear()))];
+---
+
+<Base title="文章归档">
+  <section class="page-hero sky-grid">
+    <div class="wrap">
+      <span class="label">EVERY IDEA LEAVES A TRACE / 时间胶囊</span>
+      <h1 class="page-heading">
+        THE ARCHIVE<span class="outline">.</span>
+      </h1>
+      <p>{posts.length} 篇文章，一段持续生长的记录。沿着时间线，找回一个想法。</p>
+    </div>
+  </section>
+  <section class="wrap section">
+    <div class="content-layout">
+      <div>
+        {years.map((year) => (
+          <section class="archive-group">
+            <h2 class="archive-year">
+              {year}
+              <small>
+                {posts.filter((post) => post.data.date.getUTCFullYear() === year).length} STORIES
+              </small>
+            </h2>
+            {posts
+              .filter((post) => post.data.date.getUTCFullYear() === year)
+              .map((post) => (
+                <a href={postUrl(post)} class="archive-row">
+                  <time datetime={post.data.date.toISOString()}>
+                    {post.data.date.toISOString().slice(5, 10).replace('-', ' / ')}
+                  </time>
+                  <div>
+                    <h3>{post.data.title}</h3>
+                    <span class="label">
+                      {post.data.category} · {post.data.tags.map((tag) => `#${tag}`).join(' ')}
+                    </span>
+                  </div>
+                  <Icon name="external" />
+                </a>
+              ))}
+          </section>
+        ))}
+      </div>
+      <Sidebar />
+    </div>
+  </section>
+</Base>

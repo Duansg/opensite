@@ -1,0 +1,56 @@
+---
+import Base from '../layouts/Base.astro';
+import PixelPortrait from '../components/PixelPortrait.astro';
+import Icon from '../components/Icon.astro';
+import { site } from '../config';
+---
+
+<Base title="关于这个小站">
+  <section class="page-hero sky-grid">
+    <div class="wrap">
+      <span class="label">A HUMAN, NOT AN ALGORITHM / 关于</span>
+      <h1 class="page-heading">
+        HELLO, WORLD<span class="outline">.</span>
+      </h1>
+      <p>互联网上的一小块自留地，留给好奇心和创造欲。</p>
+    </div>
+  </section>
+  <section class="wrap section about-layout">
+    <div class="about-portrait">
+      <PixelPortrait />
+      <div class="label">
+        <span>HUMAN #0001</span>
+        <span>{site.author.toUpperCase()} ↗</span>
+      </div>
+    </div>
+    <div class="about-prose">
+      <span class="label">THE PERSON BEHIND OPEN.SITE</span>
+      <h2>HEY, I'M {site.author.toUpperCase()}.</h2>
+      <p>
+        欢迎来到
+        OPEN.SITE。这里是一个用来写下想法、记录探索、分享创作的个人空间。代码、设计、工具，还有那些暂时没法分类的灵感，都可以在这里找到位置。
+      </p>
+      <h2>WHY ANOTHER BLOG?</h2>
+      <p>
+        因为有些东西值得慢一点。信息流里的想法转瞬即逝，一个属于自己的小站，却可以把思考串起来。写作不是交付完美答案，而是把「我正在理解什么」诚实地记录下来。
+      </p>
+      <p>
+        这个博客相信开放网络的价值：清晰的链接、可订阅的内容，以及不需要注册就能开始阅读的自由。
+      </p>
+      <h2>A LITTLE BIT OF EVERYTHING.</h2>
+      <p>
+        工程，记录如何把东西做出来；设计，关心它为什么长成这样；工具，收集让创作更顺手的小方法；随笔，给那些没有明确目的的想法留个位置。
+      </p>
+      <p>保持好奇，动手创造。一个想法，一个像素，慢慢生长。</p>
+      <div class="about-links">
+        <a href={site.github} class="btn dark" target="_blank" rel="noopener noreferrer">
+          <Icon name="code" size={17} />在 GitHub 找到我 <Icon name="external" size={17} />
+        </a>
+        <a href="/rss.xml" class="btn">
+          <Icon name="rss" size={16} />
+          订阅 RSS
+        </a>
+      </div>
+    </div>
+  </section>
+</Base>

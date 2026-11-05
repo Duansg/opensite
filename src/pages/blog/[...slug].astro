@@ -1,0 +1,185 @@
+---
+import { render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Cover from '../../components/Cover.astro';
+import Icon from '../../components/Icon.astro';
+import PixelPortrait from '../../components/PixelPortrait.astro';
+import { getPosts, formatDate, readingTime, postUrl, tagUrl, type Post } from '../../lib/posts';
+import { site } from '../../config';
+export async function getStaticPaths() {
+  const posts = await getPosts();
+  return posts.map((post, i) => ({
+    params: { slug: post.id },
+    props: { post, previous: posts[i + 1], next: posts[i - 1] },
+  }));
+}
+interface Props {
+  post: Post;
+  previous?: Post;
+  next?: Post;
+}
+const { post, previous, next } = Astro.props;
+const { Content, headings } = await render(post);
+const toc = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
+---
+
+<Base
+  title={post.data.title}
+  description={post.data.description}
+  article
+  date={post.data.date}
+  updated={post.data.updated}
+>
+  <section class="sky-grid">
+    <div class="wrap article-heading-wrap">
+      <nav class="breadcrumbs" aria-label="面包屑">
+        <a href="/">首页</a>
+        <span>/</span>
+        <a href="/blog/">文章</a>
+        <span>/</span>
+        <a href={`/blog/?category=${encodeURIComponent(post.data.category)}`}>
+          {post.data.category}
+        </a>
+      </nav>
+      <span class:list={['category-badge', `category-${post.data.category}`]}>
+        {post.data.category}
+      </span>
+      <h1 class="article-heading">{post.data.title}</h1>
+      <p class="article-deck">{post.data.description}</p>
+      <div class="article-meta">
+        <a href="/about/" class="author">
+          <PixelPortrait />
+          {site.author}
+        </a>
+        <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
+        <span>{readingTime(post.body)} MIN READ</span>
+        {post.data.updated && <span>更新于 {formatDate(post.data.updated)}</span>}
+      </div>
+    </div>
+  </section>
+  <section class="wrap section article-layout">
+    <div class="article-main">
+      <div class="article-cover">
+        <Cover type={post.data.cover} />
+      </div>
+      {post.data.demo && <p class="article-demo">示例文章 · 用于展示排版，内容仅作演示。</p>}
+      <article class="prose" id="article-content">
+        <Content />
+      </article>
+      <div class="article-actions">
+        <div class="article-tags">
+          {post.data.tags.map((tag) => (
+            <a href={tagUrl(tag)}>#{tag}</a>
+          ))}
+        </div>
+        <button class="btn copy-link" data-copy-link>
+          <Icon name="copy" size={15} />
+          <span aria-live="polite">复制文章链接</span>
+        </button>
+      </div>
+      <nav class="post-nav" aria-label="相邻文章">
+        {previous ? (
+          <a href={postUrl(previous)}>
+            <span class="label">← PREVIOUS STORY</span>
+            <strong>{previous.data.title}</strong>
+          </a>
+        ) : (
+          <div />
+        )}
+        {next && (
+          <a class="next" href={postUrl(next)}>
+            <span class="label">NEXT STORY →</span>
+            <strong>{next.data.title}</strong>
+          </a>
+        )}
+      </nav>
+    </div>
+    {toc.length > 0 && (
+      <aside class="toc" aria-label="文章目录">
+        <div class="toc-title label">
+          ON THIS PAGE / 目录<span>↓</span>
+        </div>
+        <nav>
+          {toc.map((heading) => (
+            <a href={`#${heading.slug}`} class={`depth-${heading.depth}`} data-toc={heading.slug}>
+              {heading.text}
+            </a>
+          ))}
+        </nav>
+        <div
+          class="reading-progress"
+          role="progressbar"
+          aria-label="阅读进度"
+          aria-valuemin="0"
+          aria-valuemax="100"
+          aria-valuenow="0"
+        >
+          <span />
+        </div>
+      </aside>
+    )}
+  </section>
+</Base>
+<script>
+  const copyButton = document.querySelector<HTMLButtonElement>('[data-copy-link]');
+  let resetTimer: ReturnType<typeof setTimeout>;
+  copyButton?.addEventListener('click', async () => {
+    const label = copyButton.querySelector('span');
+    if (!label) return;
+    try {
+      await navigator.clipboard.writeText(location.origin + location.pathname);
+      label.textContent = '链接已复制 ✓';
+    } catch {
+      label.textContent = '请从地址栏复制链接';
+    }
+    clearTimeout(resetTimer);
+    resetTimer = setTimeout(() => {
+      label.textContent = '复制文章链接';
+    }, 2500);
+  });
+  const progress = document.querySelector<HTMLElement>('.reading-progress');
+  const bar = progress?.querySelector<HTMLElement>('span');
+  const article = document.querySelector<HTMLElement>('#article-content');
+  const headings = [
+    ...document.querySelectorAll<HTMLElement>('#article-content h2, #article-content h3'),
+  ];
+  const links = [...document.querySelectorAll<HTMLAnchorElement>('[data-toc]')];
+  function updateReading() {
+    if (!article) return;
+    const rect = article.getBoundingClientRect();
+    const percentage = Math.round(
+      Math.max(
+        0,
+        Math.min(
+          100,
+          ((innerHeight * 0.25 - rect.top) / Math.max(1, rect.height - innerHeight * 0.5)) * 100,
+        ),
+      ),
+    );
+    if (bar) bar.style.width = `${percentage}%`;
+    progress?.setAttribute('aria-valuenow', String(percentage));
+    const current = headings
+      .filter((heading) => heading.getBoundingClientRect().top <= innerHeight * 0.3)
+      .at(-1);
+    links.forEach((link) => {
+      if (link.dataset.toc === current?.id) link.setAttribute('aria-current', 'location');
+      else link.removeAttribute('aria-current');
+    });
+  }
+  let ticking = false;
+  window.addEventListener(
+    'scroll',
+    () => {
+      if (!ticking) {
+        ticking = true;
+        requestAnimationFrame(() => {
+          updateReading();
+          ticking = false;
+        });
+      }
+    },
+    { passive: true },
+  );
+  window.addEventListener('resize', updateReading);
+  updateReading();
+</script>

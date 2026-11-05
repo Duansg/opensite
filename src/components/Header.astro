@@ -1,0 +1,85 @@
+---
+import Icon from './Icon.astro';
+import PixelPortrait from './PixelPortrait.astro';
+import { site } from '../config';
+const [brandLead, ...brandRest] = site.name.split('.');
+const path = Astro.url.pathname;
+const links = [
+  { href: '/', label: '首页', en: 'HOME' },
+  { href: '/blog/', label: '文章', en: 'WRITING' },
+  { href: '/archive/', label: '归档', en: 'ARCHIVE' },
+  { href: '/about/', label: '关于', en: 'ABOUT' },
+];
+---
+
+<header class="site-header sky-grid">
+  <nav class="wrap nav" aria-label="主导航">
+    <a href="/" class="logo" aria-label={`${site.name} 首页`}>
+      <PixelPortrait />
+      {brandLead}
+      {brandRest.length > 0 && (
+        <>
+          <span class="logo-dot">.</span>
+          {brandRest.join('.')}
+        </>
+      )}
+    </a>
+    <div class="desktop-nav">
+      {links.map((link) => (
+        <a
+          href={link.href}
+          class:list={[
+            'nav-link',
+            { active: link.href === '/' ? path === '/' : path.startsWith(link.href) },
+          ]}
+          aria-current={
+            (link.href === '/' ? path === '/' : path.startsWith(link.href)) ? 'page' : undefined
+          }
+        >
+          {link.label}
+          <span>{link.en}</span>
+        </a>
+      ))}
+    </div>
+    <div class="nav-actions">
+      <button class="search-toggle icon-button" aria-label="搜索文章" data-search-open>
+        <Icon name="search" />
+        <kbd>⌘ K</kbd>
+      </button>
+      <a class="btn dark nav-rss" href="/rss.xml">
+        <Icon name="rss" size={15} />
+        订阅 RSS
+      </a>
+      <button
+        class="icon-button mobile-toggle"
+        aria-label="打开导航"
+        aria-controls="mobile-menu"
+        aria-expanded="false"
+      >
+        <Icon name="menu" />
+      </button>
+    </div>
+  </nav>
+  <div id="mobile-menu" class="mobile-menu wrap" hidden>
+    {links.map((link) => (
+      <a href={link.href}>
+        {link.label}
+        <span class="label">{link.en}</span>
+      </a>
+    ))}
+    <a href="/rss.xml">
+      订阅 RSS <Icon name="rss" size={16} />
+    </a>
+  </div>
+</header>
+<script>
+  const toggle = document.querySelector<HTMLButtonElement>('.mobile-toggle');
+  const menu = document.querySelector<HTMLElement>('#mobile-menu');
+  toggle?.addEventListener('click', () => {
+    if (!menu) return;
+    const expanded = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', String(!expanded));
+    toggle.setAttribute('aria-label', expanded ? '打开导航' : '关闭导航');
+    menu.hidden = expanded;
+  });
+</script>

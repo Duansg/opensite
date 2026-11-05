@@ -1,0 +1,84 @@
+---
+interface Props {
+  type: string;
+}
+const { type } = Astro.props;
+---
+
+<div class:list={['cover', `cover-${type}`]} aria-hidden="true">
+  <span class="cover-coordinate label">OPEN FILE / {type.toUpperCase()}</span>
+  <svg viewBox="0 0 320 210" fill="none" shape-rendering="crispEdges">
+    {type === 'computer' && (
+      <g>
+        <path d="M91 40h138v111H91z" fill="#0d0f12" />
+        <path d="M97 46h126v99H97z" fill="#eaf7fc" />
+        <path d="M106 57h108v69H106z" fill="#0d0f12" />
+        <path d="M115 67h17v5h-17zm0 10h39v5h-39zm0 10h27v5h-27zm0 10h57v5h-57z" fill="#5ef0b8" />
+        <path d="M178 98h12v6h-12z" fill="#ffcf3f" />
+        <path d="M146 135h28v4h-28zM148 151h24v14h-24zM117 165h86v7h-86z" fill="#0d0f12" />
+        <path d="M72 178h174v7H72zM83 171h152v7H83z" fill="#0d0f12" />
+        <path d="M90 174h138v4H90z" fill="#fff" />
+        <path d="M54 65h12v5H54zm4-4h5v13h-5zM253 126h12v5h-12zm4-4h5v13h-5z" fill="#fff" />
+      </g>
+    )}
+    {type === 'planet' && (
+      <g>
+        <path
+          d="M134 44h52v9h18v9h9v18h9v52h-9v18h-9v9h-18v9h-52v-9h-18v-9h-9v-18h-9V80h9V62h9v-9h18z"
+          fill="#0d0f12"
+        />
+        <path
+          d="M134 53h52v9h18v18h9v52h-9v18h-18v9h-52v-9h-18v-18h-9V80h9V62h18z"
+          fill="#3db5e0"
+        />
+        <path
+          d="M134 62h36v18h18v18h-27v18h-27v-9h-18V89h18zM177 125h27v16h-18v9h-18v-16h9z"
+          fill="#5ef0b8"
+        />
+        <path d="m68 134 7 10 176-71-6-10-177 71Z" fill="#ffcf3f" />
+        <path d="m68 134 7 10 176-71-6-10-177 71Z" stroke="#0d0f12" stroke-width="5" />
+        <path d="M69 52h14v5H69zm5-5h5v15h-5zM240 154h14v5h-14zm5-5h5v15h-5z" fill="#0d0f12" />
+      </g>
+    )}
+    {type === 'window' && (
+      <g>
+        <path d="M65 47h197v131H65z" fill="#0d0f12" />
+        <path d="M59 41h197v131H59z" fill="#fff" stroke="#0d0f12" stroke-width="5" />
+        <path d="M62 44h191v23H62z" fill="#ffcf3f" />
+        <path d="M62 68h191" stroke="#0d0f12" stroke-width="4" />
+        <path d="M72 52h6v6h-6zm12 0h6v6h-6zm12 0h6v6h-6z" fill="#0d0f12" />
+        <path d="M78 85h70v66H78z" fill="#b7a6ff" />
+        <path d="M162 85h72v8h-72zm0 18h58v5h-58zm0 12h66v5h-66zm0 22h40v14h-40z" fill="#0d0f12" />
+        <path d="m103 103-12 14 12 14m20-28 12 14-12 14" stroke="#0d0f12" stroke-width="5" />
+      </g>
+    )}
+    {type === 'coffee' && (
+      <g>
+        <path d="M101 82h99v72h-9v12h-81v-12h-9z" fill="#fff" stroke="#0d0f12" stroke-width="6" />
+        <path d="M200 93h26v41h-26" stroke="#0d0f12" stroke-width="7" />
+        <path d="M209 102h8v23h-8" fill="#ffcf3f" />
+        <path d="M83 173h137v7H83zM125 56h7v14h-7zm14-21h7v21h-7zm15 14h7v21h-7z" fill="#0d0f12" />
+        <path d="M124 106h48v6h-48zm8 6h32v20h-32zm8 20h16v8h-16z" fill="#ff8fc0" />
+      </g>
+    )}
+    {type === 'blocks' && (
+      <g stroke="#0d0f12" stroke-width="5">
+        <path d="M80 107h65v65H80z" fill="#3db5e0" />
+        <path d="M155 107h65v65h-65z" fill="#ffcf3f" />
+        <path d="M117 32h65v65h-65z" fill="#5ef0b8" />
+        <path d="M91 123h42m-42 12h29m47-10h41m-41 12h25m-64-88h41m-41 12h26" />
+      </g>
+    )}
+    {type === 'terminal' && (
+      <g>
+        <path d="M63 45h199v130H63z" fill="#0d0f12" />
+        <path d="M57 39h199v130H57z" fill="#0d0f12" stroke="#fff" stroke-width="5" />
+        <path d="M60 65h193" stroke="#fff" stroke-width="3" />
+        <path d="M71 49h6v6h-6zm13 0h6v6h-6zm13 0h6v6h-6z" fill="#5ef0b8" />
+        <path d="m77 86 12 10-12 10m26 0h17M77 128h73" stroke="#5ef0b8" stroke-width="5" />
+        <path d="M159 124h11v7h-11z" fill="#ffcf3f" />
+      </g>
+    )}
+  </svg>
+  <span class="cover-mark label">24 × 24 SPIRIT ↗</span>
+</div>

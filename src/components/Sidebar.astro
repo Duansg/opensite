@@ -1,0 +1,72 @@
+---
+import PixelPortrait from './PixelPortrait.astro';
+import Icon from './Icon.astro';
+import { site, categories, categoryEnglish } from '../config';
+import { getPosts, tagUrl } from '../lib/posts';
+const posts = await getPosts();
+const tags = [...new Set(posts.flatMap((post) => post.data.tags))];
+---
+
+<aside class="blog-sidebar" aria-label="博客信息">
+  <div class="about-sheet">
+    <div class="sheet-top label">
+      THE HUMAN BEHIND THE PIXELS <span>↘</span>
+    </div>
+    <div class="about-content">
+      <div class="avatar-square">
+        <PixelPortrait />
+      </div>
+      <h3>
+        HEY, I'M {site.author.toUpperCase()}
+        <span class="sky-dot">.</span>
+      </h3>
+      <p>
+        写代码，也写下代码之外的事。
+        <br />
+        在这里记录探索，收集灵感，
+        <br />
+        让想法在像素之间自由生长。
+      </p>
+      <a href="/about/" class="text-link">
+        关于这个小站 <Icon name="external" size={17} />
+      </a>
+    </div>
+    <div class="about-status label">
+      <span class="status-pixel"></span>ALWAYS A WORK IN PROGRESS
+    </div>
+  </div>
+  <div class="sidebar-block">
+    <h3 class="label sidebar-heading">EXPLORE BY TOPIC / 分类</h3>
+    {categories.map((category) => (
+      <a class="category-row" href={`/blog/?category=${encodeURIComponent(category)}`}>
+        <span>
+          {category}
+          <small>{categoryEnglish[category]}</small>
+        </span>
+        <b class="label">
+          {String(posts.filter((post) => post.data.category === category).length).padStart(2, '0')}{' '}
+          ↗
+        </b>
+      </a>
+    ))}
+  </div>
+  <div class="sidebar-block">
+    <h3 class="label sidebar-heading">CONNECT THE DOTS / 标签</h3>
+    <div class="tag-cloud">
+      {tags.map((tag) => (
+        <a href={tagUrl(tag)}>#{tag}</a>
+      ))}
+    </div>
+  </div>
+  <div class="little-note">
+    <span class="label">A SMALL REMINDER</span>
+    <p>
+      Stay curious.
+      <br />
+      Make things.
+      <br />
+      <span>Be yourself.</span>
+    </p>
+    <span class="label">✳ THE INTERNET IS STILL FUN.</span>
+  </div>
+</aside>

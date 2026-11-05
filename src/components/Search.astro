@@ -1,0 +1,37 @@
+---
+import Icon from './Icon.astro';
+---
+
+<dialog class="search-dialog" aria-labelledby="search-heading">
+  <div class="search-top">
+    <span id="search-heading" class="label">
+      FIND SOMETHING GOOD / 搜索
+    </span>
+    <button class="icon-button" data-search-close aria-label="关闭搜索">
+      <Icon name="close" />
+    </button>
+  </div>
+  <form role="search" class="search-form">
+    <Icon name="search" />
+    <label class="sr-only" for="global-search">
+      搜索文章全文、标题或标签
+    </label>
+    <input
+      id="global-search"
+      type="search"
+      placeholder="搜一个想法、关键词或标签…"
+      autocomplete="off"
+    />
+    <kbd>ESC</kbd>
+  </form>
+  <div id="search-results" class="search-results" aria-live="polite">
+    <p class="search-hint">输入关键词，探索这个小小的数字花园。</p>
+  </div>
+  <div class="search-bottom label">
+    全文搜索 · 支持中文 <span>↑ ↓ 浏览 · ENTER 打开</span>
+  </div>
+</dialog>
+<script>
+  import { initSearch } from '../scripts/search';
+  initSearch();
+</script>

@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.astro/
+.wrangler/
+.idea/
+.env*
+.dev.vars*
+public/
+package-lock.json
+LICENSE
