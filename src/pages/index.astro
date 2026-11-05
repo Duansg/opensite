@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import PostCard from '../components/PostCard.astro';
 import Sidebar from '../components/Sidebar.astro';
 import Icon from '../components/Icon.astro';
+import PixelPortrait from '../components/PixelPortrait.astro';
 import { getPosts } from '../lib/posts';
 import { categories } from '../config';
 const posts = await getPosts();
@@ -57,12 +58,13 @@ const ticker = [
       <div class="hero-stage">
         <span class="stage-hint label">MOVE TO SCATTER</span>
         <span class="stage-id label px-corners">HUMAN #0001</span>
-        <canvas
-          id="pixel-portrait"
-          width="520"
-          height="520"
-          aria-label="鼠标移动时散开又聚拢的原创像素人物"
-        ></canvas>
+        <div class="hero-portrait">
+          <PixelPortrait
+            class="hero-avatar-fallback"
+            alt="巫师像素头像，鼠标移动时像素散开再聚拢"
+          />
+          <canvas id="pixel-portrait" width="576" height="576" aria-hidden="true" hidden></canvas>
+        </div>
         <span class="stage-note label">✳ IDEAS HAVE NO LIMITS</span>
       </div>
     </div>

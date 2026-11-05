@@ -3,6 +3,7 @@ export const site = {
   title: 'OPEN.SITE — 保持好奇，自由生长',
   description: '一个关于代码、设计和日常灵感的个人博客。记录构建的过程，分享值得留下的想法。',
   author: 'Duan',
+  avatar: '/images/avatar-pixel.png',
   github: 'https://github.com/Duansg',
   repository: 'https://github.com/Duansg/opensite',
 };

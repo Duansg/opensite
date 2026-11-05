@@ -205,7 +205,13 @@ button {
   letter-spacing: -1px;
   white-space: nowrap;
 }
-.logo > svg {
+.pixel-avatar {
+  display: block;
+  flex-shrink: 0;
+  object-fit: contain;
+  image-rendering: pixelated;
+}
+.logo > .pixel-avatar {
   width: 36px;
   height: 36px;
   margin-right: 10px;
@@ -344,10 +350,24 @@ button {
   min-width: 0;
   min-height: 400px;
 }
-.hero-stage canvas {
-  display: block;
+.hero-portrait {
+  position: relative;
   width: 100%;
   aspect-ratio: 1;
+}
+.hero-avatar-fallback {
+  width: 100%;
+  height: 100%;
+}
+.hero-portrait.is-interactive .hero-avatar-fallback {
+  opacity: 0;
+}
+.hero-stage canvas {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
   cursor: crosshair;
   touch-action: pan-y;
 }
@@ -685,7 +705,7 @@ button {
   margin-bottom: 20px;
   overflow: hidden;
 }
-.avatar-square svg {
+.avatar-square .pixel-avatar {
   width: 100%;
   height: 100%;
 }
@@ -989,7 +1009,7 @@ button {
   align-items: center;
   gap: 8px;
 }
-.article-meta .author svg {
+.article-meta .author .pixel-avatar {
   width: 29px;
   height: 29px;
   background: var(--cloud);
@@ -1210,8 +1230,9 @@ button {
   position: sticky;
   top: 30px;
 }
-.about-portrait > svg {
+.about-portrait > .pixel-avatar {
   width: 100%;
+  height: auto;
   aspect-ratio: 1;
 }
 .about-portrait .label {
@@ -1435,7 +1456,7 @@ button {
   .logo {
     font-size: 23px;
   }
-  .logo > svg {
+  .logo > .pixel-avatar {
     width: 32px;
     height: 32px;
   }
@@ -1496,10 +1517,7 @@ button {
     width: 100%;
     max-width: 350px;
     margin: 24px auto 0;
-    aspect-ratio: 1.1;
-  }
-  .hero-stage canvas {
-    aspect-ratio: 1.1;
+    aspect-ratio: 1;
   }
   .stage-hint,
   .stage-id {

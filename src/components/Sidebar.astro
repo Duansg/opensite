@@ -14,7 +14,7 @@ const tags = [...new Set(posts.flatMap((post) => post.data.tags))];
     </div>
     <div class="about-content">
       <div class="avatar-square">
-        <PixelPortrait />
+        <PixelPortrait alt={`${site.author} 的像素头像`} />
       </div>
       <h3>
         HEY, I'M {site.author.toUpperCase()}

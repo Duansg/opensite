@@ -1,26 +1,19 @@
 ---
+import { site } from '../config';
+
 interface Props {
   class?: string;
+  alt?: string;
 }
+
+const { class: className, alt = '' } = Astro.props;
 ---
 
-<svg
-  class={Astro.props.class}
-  viewBox="0 0 24 24"
-  fill="none"
-  shape-rendering="crispEdges"
-  aria-hidden="true"
->
-  <path fill="#0d0f12" d="M7 4h10v1h2v3h1v12h-2v2h-5v2H7V4Z" />
-  <path fill="#d9ab82" d="M8 8h10v12h-2v1h-4v3H8V8Z" />
-  <path fill="#b98057" d="M8 9h2v11h2v4H8V9Z" />
-  <path fill="#0d0f12" d="M7 4h10v1h2v3H6V6h1V4Z" />
-  <path fill="#5ef0b8" d="M8 4h8v1h2v2H7V6h1V4Z" />
-  <path fill="#2ba478" d="M8 4h2v2H8zM12 4h2v2h-2zM16 5h2v2h-2zM6 7h13v1H6z" />
-  <path fill="#0d0f12" d="M8 10h11v1h1v1h-1v2h-4v-3h-2v3H9v-3H8v-1Z" />
-  <path fill="#b7a6ff" d="M10 11h2v2h-2zM16 11h2v2h-2z" />
-  <path fill="#fff" d="M10 11h1v1h-1zM16 11h1v1h-1z" />
-  <path fill="#b98057" d="M15 14h2v2h-2zM11 18h5v1h-5z" />
-  <path fill="#0d0f12" d="M13 17h4v1h-4z" />
-  <path fill="#ffcf3f" d="M7 14h1v3H7z" />
-</svg>
+<img
+  class:list={['pixel-avatar', className]}
+  src={site.avatar}
+  width="576"
+  height="576"
+  alt={alt}
+  decoding="async"
+/>

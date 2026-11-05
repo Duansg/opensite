@@ -1,51 +1,44 @@
-export function initPixelPortrait() {
+export async function initPixelPortrait() {
   const canvas = document.querySelector<HTMLCanvasElement>('#pixel-portrait');
-  if (!canvas) return;
-  const ctx = canvas.getContext('2d');
-  if (!ctx) return;
-  // Original 24 × 24 pixel portrait with pointer-driven scatter and reassembly.
-  const rows = [
-    '........................',
-    '........................',
-    '........................',
-    '........KKKKKKKK........',
-    '.......KMMMMMMMMK.......',
-    '......KMMTMMTMMTMK......',
-    '......KMMMMMMMMMMK......',
-    '.....KKKKKKKKKKKKKK.....',
-    '......KSSSSSSSSSSK......',
-    '......KSDSSSSSSSSK......',
-    '......KKKKKKKKKKKKK.....',
-    '......KKLLKKKLLKSKK.....',
-    '......KKLWKSKLWKSK......',
-    '......KKKKKSKKKKSK......',
-    '.....GKDDSSSSSSSSK......',
-    '.....GKDDSSSSDSSSK......',
-    '......KDDSSSSDDSSK......',
-    '......KDDSSKKKKSSK......',
-    '......KDDSSSSSSSSK......',
-    '......KDDSSSSSSSK.......',
-    '......KDDSSSKKKK........',
-    '......KDDSSSK...........',
-    '......KDDSSSK...........',
-    '......KDDSSSK...........',
-  ];
-  const palette: Record<string, string> = {
-    K: '#0d0f12',
-    S: '#d9ab82',
-    D: '#b98057',
-    M: '#5ef0b8',
-    T: '#2ba478',
-    L: '#b7a6ff',
-    W: '#ffffff',
-    G: '#ffcf3f',
-  };
+  const portrait = canvas?.closest<HTMLElement>('.hero-portrait');
+  const image = portrait?.querySelector<HTMLImageElement>('.hero-avatar-fallback');
+  const ctx = canvas?.getContext('2d');
+  if (!canvas || !ctx || !portrait || !image) return;
+
+  // Sample the shared avatar into the same 64 × 64 grid used by the UI icons.
+  // Keep the HTML image visible if decoding or canvas setup fails.
+  const size = 64;
+  const sample = document.createElement('canvas');
+  sample.width = sample.height = size;
+  const sampler = sample.getContext('2d', { willReadFrequently: true });
+  if (!sampler) return;
+  let data: Uint8ClampedArray;
+  try {
+    await image.decode();
+    sampler.imageSmoothingEnabled = false;
+    sampler.drawImage(image, 0, 0, size, size);
+    data = sampler.getImageData(0, 0, size, size).data;
+  } catch {
+    return;
+  }
+
+  const cell = canvas.width / size;
   const pixels: { x: number; y: number; color: string; dx: number; dy: number }[] = [];
-  rows.forEach((row, y) =>
-    [...row].forEach((color, x) => {
-      if (palette[color]) pixels.push({ x, y, color: palette[color], dx: 0, dy: 0 });
-    }),
-  );
+  for (let y = 0; y < size; y++) {
+    for (let x = 0; x < size; x++) {
+      const offset = (y * size + x) * 4;
+      const [r, g, b, alpha] = data.subarray(offset, offset + 4);
+      if (alpha === 0) continue;
+      pixels.push({
+        x: x * cell,
+        y: y * cell,
+        color: `rgba(${r}, ${g}, ${b}, ${alpha / 255})`,
+        dx: 0,
+        dy: 0,
+      });
+    }
+  }
+
   let pointer: { x: number; y: number } | null = null;
   let frame = 0;
   let visible = true;
@@ -53,16 +46,14 @@ export function initPixelPortrait() {
   function draw() {
     frame = 0;
     if (!ctx || !canvas) return;
-    ctx.clearRect(0, 0, 520, 520);
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     let moving = false;
     pixels.forEach((pixel) => {
-      const x = pixel.x * 21.67;
-      const y = pixel.y * 21.67;
       let targetX = 0,
         targetY = 0;
       if (pointer && !reduced.matches) {
-        const vx = x - pointer.x;
-        const vy = y - pointer.y;
+        const vx = pixel.x + cell / 2 - pointer.x;
+        const vy = pixel.y + cell / 2 - pointer.y;
         const distance = Math.hypot(vx, vy);
         if (distance < 120) {
           const force = (120 - distance) * 0.7;
@@ -70,11 +61,15 @@ export function initPixelPortrait() {
           targetY = (vy / (distance || 1)) * force;
         }
       }
-      pixel.dx += (targetX - pixel.dx) * 0.14;
-      pixel.dy += (targetY - pixel.dy) * 0.14;
-      if (Math.abs(targetX - pixel.dx) + Math.abs(targetY - pixel.dy) > 0.1) moving = true;
+      if (reduced.matches) {
+        pixel.dx = pixel.dy = 0;
+      } else {
+        pixel.dx += (targetX - pixel.dx) * 0.14;
+        pixel.dy += (targetY - pixel.dy) * 0.14;
+        if (Math.abs(targetX - pixel.dx) + Math.abs(targetY - pixel.dy) > 0.1) moving = true;
+      }
       ctx.fillStyle = pixel.color;
-      ctx.fillRect(Math.round(x + pixel.dx), Math.round(y + pixel.dy), 22, 22);
+      ctx.fillRect(Math.round(pixel.x + pixel.dx), Math.round(pixel.y + pixel.dy), cell, cell);
     });
     if (moving && visible) frame = requestAnimationFrame(draw);
   }
@@ -85,8 +80,8 @@ export function initPixelPortrait() {
     if (event.pointerType === 'touch') return;
     const bounds = canvas.getBoundingClientRect();
     pointer = {
-      x: ((event.clientX - bounds.left) / bounds.width) * 520,
-      y: ((event.clientY - bounds.top) / bounds.height) * 520,
+      x: ((event.clientX - bounds.left) / bounds.width) * canvas.width,
+      y: ((event.clientY - bounds.top) / bounds.height) * canvas.height,
     };
     schedule();
   });
@@ -94,6 +89,7 @@ export function initPixelPortrait() {
     pointer = null;
     schedule();
   });
+  reduced.addEventListener('change', schedule);
   new IntersectionObserver((entries) => {
     visible = entries[0].isIntersecting;
     if (visible) schedule();
@@ -103,4 +99,6 @@ export function initPixelPortrait() {
     }
   }).observe(canvas);
   draw();
+  canvas.hidden = false;
+  portrait.classList.add('is-interactive');
 }
