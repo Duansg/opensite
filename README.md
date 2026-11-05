@@ -4,7 +4,14 @@ Astro 静态个人博客。采用新野兽派 × 像素艺术：天蓝网格、�
 
 ## 本地运行
 
-Node.js ≥22.23.4（CI 使用 `.node-version` 的版本），Astro 7.4.5。
+Node.js 26（本地版本文件和 CI 固定为 26.13.0），Astro 7.4.5。
+
+使用 nvm 时，在项目目录安装并切换到 `.nvmrc` 指定的版本：
+
+```sh
+nvm install
+nvm use
+```
 
 ```sh
 npm ci
@@ -16,8 +23,10 @@ npm run dev
 如果系统 Node 版本较旧，可使用临时运行时，不修改全局 Node：
 
 ```sh
-npx --yes --package=node@22.23.4 -c 'npm run dev'
+npx --yes --package=node@26.13.0 -c 'npm run dev'
 ```
+
+在 IDEA 中运行 npm 脚本时，项目的 Node runtime 也应选择 Node 26，并使用对应的 npm。版本文件不会覆盖运行配置中手动指定的旧解释器路径。
 
 ```sh
 npm run verify  # 类型检查 + 静态构建 + 站内链接/RSS/搜索/SEO 元信息检查

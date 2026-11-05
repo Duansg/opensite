@@ -16,7 +16,7 @@
 | Build command          | `npm run build`                                        |
 | Build output directory | `dist`                                                 |
 | Root directory         | 仓库根目录                                             |
-| Environment variable   | `NODE_VERSION=22.23.4`                                 |
+| Environment variable   | `NODE_VERSION=26.13.0`                                 |
 | Environment variable   | `SITE_URL=https://实际分配的域名`                      |
 
 4. 首次部署后，检查首页、正文、`/rss.xml` 与不存在路径的 404。
@@ -54,7 +54,7 @@ npx wrangler pages project create opensite --production-branch main
 1. 在 Cloudflare 创建 Workers 应用并连接 **Duansg/opensite**。
 2. 生产分支 `main`，构建命令 `npm run build`，部署命令 `npx wrangler deploy --config wrangler.worker.jsonc`。
 3. 对非生产分支版本上传命令使用 `npx wrangler versions upload --config wrangler.worker.jsonc`（若启用预览构建）。
-4. 设置 `NODE_VERSION=22.23.4` 与 `SITE_URL=https://实际的workers域名或自定义域名`。
+4. 设置 `NODE_VERSION=26.13.0` 与 `SITE_URL=https://实际的workers域名或自定义域名`。
 5. 此后每次推送，Workers Builds 自动构建与发布。
 
 也可以通过同一个 GitHub Actions 工作流发布 Workers：将 `CLOUDFLARE_DEPLOY_TARGET` 设为 `workers`，token 使用目标账户的 Workers Scripts Edit 权限。不要同时启用 Workers Builds 与 Actions 发布。
