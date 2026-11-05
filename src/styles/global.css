@@ -1,9 +1,9 @@
 :root {
-  --sky: #3db5e0;
-  --sky-deep: #2a9fca;
+  --sky: #7c9cff;
+  --sky-deep: #3656b8;
   --ink: #0d0f12;
   --paper: #fff;
-  --cloud: #eaf7fc;
+  --cloud: #f1f3ff;
   --gold: #ffcf3f;
   --mint: #5ef0b8;
   --rose: #ff8fc0;
@@ -231,7 +231,7 @@ button {
 .nav-link > span {
   font-family: var(--mono);
   font-size: 9px;
-  opacity: 0.65;
+  opacity: 0.8;
 }
 .nav-link.active::after {
   content: '';
@@ -355,7 +355,7 @@ button {
   position: absolute;
   top: 14px;
   left: 0;
-  opacity: 0.7;
+  opacity: 0.8;
 }
 .stage-id {
   position: absolute;
@@ -510,6 +510,10 @@ button {
 }
 .cover-terminal {
   background-color: var(--sky-deep);
+}
+.cover-terminal .cover-coordinate,
+.cover-terminal .cover-mark {
+  color: var(--paper);
 }
 .cover-coordinate {
   position: absolute;
@@ -949,7 +953,7 @@ button {
   display: flex;
   align-items: center;
   gap: 12px;
-  color: var(--mute);
+  color: var(--ink);
   font-family: var(--mono);
   font-size: 11px;
   margin-bottom: 30px;
