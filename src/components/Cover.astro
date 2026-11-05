@@ -1,4 +1,6 @@
 ---
+import { ui, formatMessage } from '../i18n';
+
 interface Props {
   type: string;
 }
@@ -6,7 +8,9 @@ const { type } = Astro.props;
 ---
 
 <div class:list={['cover', `cover-${type}`]} aria-hidden="true">
-  <span class="cover-coordinate label">OPEN FILE / {type.toUpperCase()}</span>
+  <span class="cover-coordinate label">
+    {formatMessage(ui.cover.label, { type: type.toUpperCase() })}
+  </span>
   <svg viewBox="0 0 320 210" fill="none" shape-rendering="crispEdges">
     {type === 'computer' && (
       <g>
@@ -80,5 +84,5 @@ const { type } = Astro.props;
       </g>
     )}
   </svg>
-  <span class="cover-mark label">24 × 24 SPIRIT ↗</span>
+  <span class="cover-mark label">{ui.cover.mark}</span>
 </div>

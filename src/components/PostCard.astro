@@ -2,6 +2,8 @@
 import Cover from './Cover.astro';
 import Icon from './Icon.astro';
 import { formatDate, readingTime, postUrl, type Post } from '../lib/posts';
+import { locale } from '../config';
+import { ui, formatMessage, formatCount } from '../i18n';
 interface Props {
   post: Post;
   featured?: boolean;
@@ -15,28 +17,32 @@ const { post, featured = false } = Astro.props;
 >
   <a class="card-cover-link" href={postUrl(post)} tabindex="-1" aria-hidden="true">
     <Cover type={post.data.cover} />
-    {featured && <span class="feature-sticker label">★ EDITOR'S PICK</span>}
+    {featured && <span class="feature-sticker label">{ui.posts.featured}</span>}
   </a>
   <div class="card-body">
     <div class="post-meta">
       <span class:list={['category-badge', `category-${post.data.category}`]}>
-        {post.data.category}
+        {ui.categories[post.data.category].label}
       </span>
       <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
-      <span>{readingTime(post.body)} MIN READ</span>
+      <span>{formatCount(ui.common.readingTime, readingTime(post.body), locale)}</span>
     </div>
-    <h3>
+    <h3 lang={post.data.lang}>
       <a href={postUrl(post)}>{post.data.title}</a>
     </h3>
-    <p>{post.data.description}</p>
+    <p lang={post.data.lang}>{post.data.description}</p>
     <div class="card-bottom">
       <span class="card-tags">
         {post.data.tags.slice(0, 2).map((tag) => (
           <span>#{tag}</span>
         ))}
       </span>
-      <a href={postUrl(post)} class="read-link" aria-label={`阅读：${post.data.title}`}>
-        <span>READ STORY</span>
+      <a
+        href={postUrl(post)}
+        class="read-link"
+        aria-label={formatMessage(ui.posts.readLabel, { title: post.data.title })}
+      >
+        <span>{ui.posts.read}</span>
         <Icon name="arrow" size={19} />
       </a>
     </div>

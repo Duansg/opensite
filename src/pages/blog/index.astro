@@ -3,37 +3,44 @@ import Base from '../../layouts/Base.astro';
 import PostCard from '../../components/PostCard.astro';
 import Sidebar from '../../components/Sidebar.astro';
 import { getPosts } from '../../lib/posts';
-import { categories } from '../../config';
+import { locale } from '../../config';
+import { categories } from '../../lib/categories';
+import { ui, formatCount } from '../../i18n';
 const posts = await getPosts();
 ---
 
-<Base title="全部文章">
+<Base title={ui.posts.title}>
   <section class="page-hero sky-grid">
     <div class="wrap">
-      <span class="label">A COLLECTION OF THINGS WORTH SHARING</span>
+      <span class="label">{ui.posts.kicker}</span>
       <h1 class="page-heading">
-        THE WRITING<span class="outline">.</span>
+        {ui.posts.heading}
+        <span class="outline">.</span>
       </h1>
-      <p>关于代码、设计与日常的探索笔记。慢慢写，慢慢生长。</p>
+      <p>{ui.posts.description}</p>
     </div>
   </section>
   <section class="wrap section">
     <div class="content-layout">
       <div>
         <div class="filter-bar">
-          <div class="filter-tabs" role="group" aria-label="按分类筛选">
-            {['全部', ...categories].map((category, i) => (
+          <div class="filter-tabs" role="group" aria-label={ui.posts.filter}>
+            {(['all', ...categories] as const).map((category, i) => (
               <button
                 class="filter-tab"
                 data-filter={category}
                 aria-pressed={i === 0 ? 'true' : 'false'}
               >
-                {category}
+                {category === 'all' ? ui.posts.all : ui.categories[category].label}
               </button>
             ))}
           </div>
-          <span class="filter-count label" aria-live="polite">
-            <span id="post-count">{posts.length}</span> STORIES
+          <span
+            class="filter-count label"
+            aria-live="polite"
+            data-count-messages={JSON.stringify(ui.common.storyCount)}
+          >
+            {formatCount(ui.common.storyCount, posts.length, locale)}
           </span>
         </div>
         <div class="post-grid">
@@ -41,7 +48,7 @@ const posts = await getPosts();
             <PostCard post={post} />
           ))}
           <p class="empty-state" hidden>
-            这个分类还在生长中，先看看其他文章吧。
+            {ui.posts.empty}
           </p>
         </div>
       </div>
@@ -50,34 +57,39 @@ const posts = await getPosts();
   </section>
 </Base>
 <script>
+  import { normalizeCategory } from '../../lib/categories';
+  import { formatCount } from '../../i18n/format';
+  import type { CountMessage } from '../../i18n/types';
   const buttons = [...document.querySelectorAll<HTMLButtonElement>('[data-filter]')];
   const cards = [...document.querySelectorAll<HTMLElement>('[data-category]')];
+  const counter = document.querySelector<HTMLElement>('.filter-count');
+  const countMessages: CountMessage = JSON.parse(counter!.dataset.countMessages!);
   function filter(category: string, updateUrl = true) {
-    if (!buttons.some((button) => button.dataset.filter === category)) category = '全部';
+    category = normalizeCategory(category) ?? 'all';
     buttons.forEach((button) =>
       button.setAttribute('aria-pressed', String(button.dataset.filter === category)),
     );
     let count = 0;
     cards.forEach((card) => {
-      card.hidden = category !== '全部' && card.dataset.category !== category;
+      card.hidden = category !== 'all' && card.dataset.category !== category;
       if (!card.hidden) count++;
     });
-    const counter = document.querySelector('#post-count');
-    if (counter) counter.textContent = String(count);
+    if (counter)
+      counter.textContent = formatCount(countMessages, count, document.documentElement.lang);
     const empty = document.querySelector<HTMLElement>('.empty-state');
     if (empty) empty.hidden = count > 0;
     if (updateUrl) {
       const url = new URL(location.href);
-      if (category === '全部') url.searchParams.delete('category');
+      if (category === 'all') url.searchParams.delete('category');
       else url.searchParams.set('category', category);
       history.pushState(null, '', url);
     }
   }
   buttons.forEach((button) =>
-    button.addEventListener('click', () => filter(button.dataset.filter || '全部')),
+    button.addEventListener('click', () => filter(button.dataset.filter || 'all')),
   );
   window.addEventListener('popstate', () =>
-    filter(new URLSearchParams(location.search).get('category') || '全部', false),
+    filter(new URLSearchParams(location.search).get('category') || 'all', false),
   );
-  filter(new URLSearchParams(location.search).get('category') || '全部', false);
+  filter(new URLSearchParams(location.search).get('category') || 'all', false);
 </script>

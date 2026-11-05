@@ -1,16 +1,17 @@
 ---
 import Base from '../layouts/Base.astro';
+import { ui } from '../i18n';
 ---
 
-<Base title="页面走丢了" noindex>
+<Base title={ui.notFound.title} noindex>
   <section class="not-found sky-grid">
     <div class="wrap">
-      <span class="label">LOST IN THE PIXELS?</span>
+      <span class="label">{ui.notFound.kicker}</span>
       <h1>404</h1>
-      <h2>这个像素，好像走丢了。</h2>
-      <p>页面可能搬家了，也可能还没被创造出来。</p>
+      <h2>{ui.notFound.heading}</h2>
+      <p>{ui.notFound.description}</p>
       <a class="btn dark" href="/">
-        ← 回到首页
+        {ui.notFound.home}
       </a>
     </div>
   </section>

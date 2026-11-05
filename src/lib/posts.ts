@@ -1,4 +1,5 @@
 import { getCollection, type CollectionEntry } from 'astro:content';
+import { locale } from '../config';
 
 export type Post = CollectionEntry<'posts'>;
 
@@ -16,7 +17,7 @@ export function readingTime(body = '') {
 }
 
 export function formatDate(date: Date) {
-  return date.toISOString().slice(0, 10).replaceAll('-', '.');
+  return new Intl.DateTimeFormat(locale, { dateStyle: 'medium', timeZone: 'UTC' }).format(date);
 }
 
 export function postUrl(post: Post) {

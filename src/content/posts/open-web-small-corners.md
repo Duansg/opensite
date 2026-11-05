@@ -2,7 +2,8 @@
 title: '互联网，依然值得拥有自己的小角落'
 description: '一个域名，一份订阅，一条认真写下的链接。在平台之外，重新发现开放网络的乐趣。'
 date: 2026-10-12
-category: '随笔'
+lang: 'zh-CN'
+category: 'thoughts'
 tags: ['开放网络', '独立博客', '日常']
 demo: true
 cover: 'planet'

@@ -5,7 +5,8 @@ import Cover from '../../components/Cover.astro';
 import Icon from '../../components/Icon.astro';
 import PixelPortrait from '../../components/PixelPortrait.astro';
 import { getPosts, formatDate, readingTime, postUrl, tagUrl, type Post } from '../../lib/posts';
-import { site } from '../../config';
+import { locale, site } from '../../config';
+import { ui, formatMessage, formatCount } from '../../i18n';
 export async function getStaticPaths() {
   const posts = await getPosts();
   return posts.map((post, i) => ({
@@ -29,31 +30,38 @@ const toc = headings.filter((heading) => heading.depth === 2 || heading.depth ==
   article
   date={post.data.date}
   updated={post.data.updated}
+  contentLanguage={post.data.lang}
 >
   <section class="sky-grid">
     <div class="wrap article-heading-wrap">
-      <nav class="breadcrumbs" aria-label="面包屑">
-        <a href="/">首页</a>
+      <nav class="breadcrumbs" aria-label={ui.article.breadcrumbs}>
+        <a href="/">{ui.nav.home.label}</a>
         <span>/</span>
-        <a href="/blog/">文章</a>
+        <a href="/blog/">{ui.nav.writing.label}</a>
         <span>/</span>
         <a href={`/blog/?category=${encodeURIComponent(post.data.category)}`}>
-          {post.data.category}
+          {ui.categories[post.data.category].label}
         </a>
       </nav>
       <span class:list={['category-badge', `category-${post.data.category}`]}>
-        {post.data.category}
+        {ui.categories[post.data.category].label}
       </span>
-      <h1 class="article-heading">{post.data.title}</h1>
-      <p class="article-deck">{post.data.description}</p>
+      <h1 class="article-heading" lang={post.data.lang}>
+        {post.data.title}
+      </h1>
+      <p class="article-deck" lang={post.data.lang}>
+        {post.data.description}
+      </p>
       <div class="article-meta">
         <a href="/about/" class="author">
           <PixelPortrait />
           {site.author}
         </a>
         <time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>
-        <span>{readingTime(post.body)} MIN READ</span>
-        {post.data.updated && <span>更新于 {formatDate(post.data.updated)}</span>}
+        <span>{formatCount(ui.common.readingTime, readingTime(post.body), locale)}</span>
+        {post.data.updated && (
+          <span>{formatMessage(ui.article.updated, { date: formatDate(post.data.updated) })}</span>
+        )}
       </div>
     </div>
   </section>
@@ -62,8 +70,8 @@ const toc = headings.filter((heading) => heading.depth === 2 || heading.depth ==
       <div class="article-cover">
         <Cover type={post.data.cover} />
       </div>
-      {post.data.demo && <p class="article-demo">示例文章 · 用于展示排版，内容仅作演示。</p>}
-      <article class="prose" id="article-content">
+      {post.data.demo && <p class="article-demo">{ui.article.demo}</p>}
+      <article class="prose" id="article-content" lang={post.data.lang}>
         <Content />
       </article>
       <div class="article-actions">
@@ -72,34 +80,41 @@ const toc = headings.filter((heading) => heading.depth === 2 || heading.depth ==
             <a href={tagUrl(tag)}>#{tag}</a>
           ))}
         </div>
-        <button class="btn copy-link" data-copy-link>
+        <button
+          class="btn copy-link"
+          data-copy-link
+          data-label={ui.article.copy}
+          data-copied={ui.article.copied}
+          data-failed={ui.article.copyFailed}
+        >
           <Icon name="copy" size={15} />
-          <span aria-live="polite">复制文章链接</span>
+          <span aria-live="polite">{ui.article.copy}</span>
         </button>
       </div>
-      <nav class="post-nav" aria-label="相邻文章">
+      <nav class="post-nav" aria-label={ui.article.adjacent}>
         {previous ? (
           <a href={postUrl(previous)}>
-            <span class="label">← PREVIOUS STORY</span>
-            <strong>{previous.data.title}</strong>
+            <span class="label">{ui.article.previous}</span>
+            <strong lang={previous.data.lang}>{previous.data.title}</strong>
           </a>
         ) : (
           <div />
         )}
         {next && (
           <a class="next" href={postUrl(next)}>
-            <span class="label">NEXT STORY →</span>
-            <strong>{next.data.title}</strong>
+            <span class="label">{ui.article.next}</span>
+            <strong lang={next.data.lang}>{next.data.title}</strong>
           </a>
         )}
       </nav>
     </div>
     {toc.length > 0 && (
-      <aside class="toc" aria-label="文章目录">
+      <aside class="toc" aria-label={ui.article.toc}>
         <div class="toc-title label">
-          ON THIS PAGE / 目录<span>↓</span>
+          {ui.article.tocTitle}
+          <span>↓</span>
         </div>
-        <nav>
+        <nav lang={post.data.lang}>
           {toc.map((heading) => (
             <a href={`#${heading.slug}`} class={`depth-${heading.depth}`} data-toc={heading.slug}>
               {heading.text}
@@ -109,7 +124,7 @@ const toc = headings.filter((heading) => heading.depth === 2 || heading.depth ==
         <div
           class="reading-progress"
           role="progressbar"
-          aria-label="阅读进度"
+          aria-label={ui.article.progress}
           aria-valuemin="0"
           aria-valuemax="100"
           aria-valuenow="0"
@@ -128,13 +143,13 @@ const toc = headings.filter((heading) => heading.depth === 2 || heading.depth ==
     if (!label) return;
     try {
       await navigator.clipboard.writeText(location.origin + location.pathname);
-      label.textContent = '链接已复制 ✓';
+      label.textContent = copyButton.dataset.copied || '';
     } catch {
-      label.textContent = '请从地址栏复制链接';
+      label.textContent = copyButton.dataset.failed || '';
     }
     clearTimeout(resetTimer);
     resetTimer = setTimeout(() => {
-      label.textContent = '复制文章链接';
+      label.textContent = copyButton.dataset.label || '';
     }, 2500);
   });
   const progress = document.querySelector<HTMLElement>('.reading-progress');

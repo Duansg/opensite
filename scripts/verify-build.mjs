@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import { readdir, readFile, stat } from 'node:fs/promises';
 import { resolve, join, dirname, extname } from 'node:path';
+import { locale } from '../src/config.ts';
+import { ui } from '../src/i18n/index.ts';
 
 const root = resolve('dist');
 async function walk(directory) {
@@ -18,6 +20,7 @@ const htmlFiles = files.filter((file) => file.endsWith('.html'));
 assert(htmlFiles.length >= 5, 'Missing core static pages');
 const search = JSON.parse(await readFile(join(root, 'search.json'), 'utf8'));
 const rss = await readFile(join(root, 'rss.xml'), 'utf8');
+assert(rss.includes(`<language>${locale}</language>`), 'RSS language differs from site config');
 assert.equal(
   search.length,
   (rss.match(/<item>/g) || []).length,
@@ -39,6 +42,13 @@ for (const required of [
 let references = 0;
 for (const file of htmlFiles) {
   const html = await readFile(file, 'utf8');
+  assert(html.includes(`<html lang="${locale}">`), `Wrong document language: ${file}`);
+  assert(
+    html.includes(`property="og:locale" content="${ui.meta.ogLocale}"`),
+    `Wrong Open Graph locale: ${file}`,
+  );
+  assert(html.includes(`aria-label="${ui.nav.label}"`), `Wrong navigation language: ${file}`);
+  assert(html.includes(`placeholder="${ui.search.placeholder}"`), `Wrong search language: ${file}`);
   assert.equal((html.match(/<h1(?:\s|>)/g) || []).length, 1, `Expected one h1: ${file}`);
   assert(html.includes('name="viewport"'), `Missing viewport: ${file}`);
   assert(html.includes('rel="canonical"'), `Missing canonical URL: ${file}`);
@@ -69,6 +79,10 @@ for (const file of htmlFiles) {
 }
 for (const post of search) {
   assert(post.body && post.title && post.url && post.tags, 'Incomplete search index item');
+  assert(
+    Object.values(ui.categories).some((category) => category.label === post.category),
+    `Search category is not localized: ${post.category}`,
+  );
   assert(
     (await stat(join(root, decodeURIComponent(post.url), 'index.html'))).isFile(),
     `Missing article ${post.url}`,

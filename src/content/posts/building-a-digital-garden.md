@@ -2,7 +2,8 @@
 title: '从零开始，搭建一座属于自己的数字花园'
 description: '在算法推荐之外，留一块属于自己的地方。关于这个博客的起点，以及为什么我们依然需要独立写作。'
 date: 2026-11-04
-category: '工程'
+lang: 'zh-CN'
+category: 'engineering'
 tags: ['Astro', '独立博客', '构建笔记']
 demo: true
 cover: 'computer'
@@ -45,7 +46,7 @@ Cloudflare 自动构建
 title: '一个值得留下的想法'
 description: '用两句话告诉读者，这篇文章为什么值得读。'
 date: 2026-11-04
-category: '随笔'
+category: 'thoughts'
 tags: ['写作', '灵感']
 ```
 

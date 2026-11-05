@@ -5,21 +5,16 @@ import Sidebar from '../components/Sidebar.astro';
 import Icon from '../components/Icon.astro';
 import PixelPortrait from '../components/PixelPortrait.astro';
 import { getPosts } from '../lib/posts';
-import { categories } from '../config';
+import { locale } from '../config';
+import { categories } from '../lib/categories';
+import { ui, formatCount } from '../i18n';
 const posts = await getPosts();
 const featured = posts.find((post) => post.data.featured) || posts[0];
 const latest = posts.filter((post) => post.id !== featured?.id).slice(0, 4);
 const topics = categories.filter((category) =>
   posts.some((post) => post.data.category === category),
 );
-const ticker = [
-  'CODE. CREATE. REPEAT.',
-  '保持好奇',
-  'A LITTLE BIT OF EVERYTHING',
-  'THINK IN PIXELS',
-  '自由生长',
-  'BUILT ON THE OPEN WEB',
-];
+const ticker = ui.home.ticker;
 ---
 
 <Base>
@@ -27,45 +22,43 @@ const ticker = [
     <div class="wrap hero-inner">
       <div class="hero-copy">
         <span class="kicker label">
-          <b>HELLO</b> WELCOME TO MY CORNER OF THE WEB
+          <b>{ui.home.hello}</b> {ui.home.welcome}
         </span>
         <h1 id="hero-title">
-          <span>OPEN</span>
-          <span class="outline">MIND.</span>
+          <span>{ui.home.heading[0]}</span>
+          <span class="outline">{ui.home.heading[1]}</span>
         </h1>
         <p class="hero-intro">
-          代码、设计，和一些不设限的想法。
-          <br />
-          把探索写成故事，让灵感自由生长。
-          <br />
-          欢迎来到我的互联网自留地。
+          {ui.home.intro.map((line, i) => (
+            <>
+              {i > 0 && <br />}
+              {line}
+            </>
+          ))}
         </p>
         <div class="hero-stats">
           <div>
             <b>{String(posts.length).padStart(2, '0')}</b>
-            <span>STORIES</span>
+            <span>{ui.common.stories}</span>
           </div>
           <div>
             <b>{String(topics.length).padStart(2, '0')}</b>
-            <span>TOPICS</span>
+            <span>{ui.home.topics}</span>
           </div>
           <div>
             <b>∞</b>
-            <span>CURIOSITY</span>
+            <span>{ui.home.curiosity}</span>
           </div>
         </div>
       </div>
       <div class="hero-stage">
-        <span class="stage-hint label">MOVE TO SCATTER</span>
-        <span class="stage-id label px-corners">HUMAN #0001</span>
+        <span class="stage-hint label">{ui.home.portraitHint}</span>
+        <span class="stage-id label px-corners">{ui.home.portraitId}</span>
         <div class="hero-portrait">
-          <PixelPortrait
-            class="hero-avatar-fallback"
-            alt="巫师像素头像，鼠标移动时像素散开再聚拢"
-          />
+          <PixelPortrait class="hero-avatar-fallback" alt={ui.home.portraitAlt} />
           <canvas id="pixel-portrait" width="576" height="576" aria-hidden="true" hidden></canvas>
         </div>
-        <span class="stage-note label">✳ IDEAS HAVE NO LIMITS</span>
+        <span class="stage-note label">{ui.home.portraitNote}</span>
       </div>
     </div>
   </section>
@@ -79,16 +72,20 @@ const ticker = [
   <section class="wrap section" aria-labelledby="latest-title">
     <div class="section-head">
       <div>
-        <span class="label">NOTES FROM THE DIGITAL GARDEN / 最新文章</span>
+        <span class="label">{ui.home.latestLabel}</span>
         <h2 id="latest-title">
-          THE LATEST<span class="sky-dot">.</span>
+          {ui.home.latestTitle}
+          <span class="sky-dot">.</span>
           <sup class="count">({String(posts.length).padStart(2, '0')})</sup>
         </h2>
       </div>
       <p>
-        有用的经验，有趣的发现。
-        <br />
-        还有正在生长的想法。
+        {ui.home.latestIntro.map((line, i) => (
+          <>
+            {i > 0 && <br />}
+            {line}
+          </>
+        ))}
       </p>
     </div>
     <div class="content-layout">
@@ -98,7 +95,7 @@ const ticker = [
           <PostCard post={post} />
         ))}
         <a class="all-posts" href="/blog/">
-          探索全部文章 <span>{String(posts.length).padStart(2, '0')} STORIES & COUNTING</span>
+          {ui.home.allPosts} <span>{formatCount(ui.home.counting, posts.length, locale)}</span>
           <Icon name="arrow" />
         </a>
       </div>

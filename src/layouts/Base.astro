@@ -5,7 +5,8 @@ import '../styles/global.css';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import Search from '../components/Search.astro';
-import { site } from '../config';
+import { locale, site } from '../config';
+import { ui, siteMetadata } from '../i18n';
 interface Props {
   title?: string;
   description?: string;
@@ -13,16 +14,18 @@ interface Props {
   date?: Date;
   updated?: Date;
   noindex?: boolean;
+  contentLanguage?: string;
 }
 const {
   title,
-  description = site.description,
+  description = siteMetadata.description,
   article = false,
   date,
   updated,
   noindex = false,
+  contentLanguage = locale,
 } = Astro.props;
-const fullTitle = title ? `${title} — ${site.name}` : site.title;
+const fullTitle = title ? `${title} — ${site.name}` : siteMetadata.title;
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const image = new URL('/og.png', Astro.site);
 const jsonLd = article
@@ -30,6 +33,7 @@ const jsonLd = article
       '@context': 'https://schema.org',
       '@type': 'BlogPosting',
       headline: title,
+      inLanguage: contentLanguage,
       description,
       datePublished: date?.toISOString(),
       dateModified: (updated || date)?.toISOString(),
@@ -41,13 +45,14 @@ const jsonLd = article
       '@context': 'https://schema.org',
       '@type': 'Blog',
       name: site.name,
+      inLanguage: locale,
       description,
       url: Astro.site?.href,
     };
 ---
 
 <!doctype html>
-<html lang="zh-CN">
+<html lang={locale}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
@@ -62,7 +67,7 @@ const jsonLd = article
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <meta property="og:site_name" content={site.name} />
-    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:locale" content={ui.meta.ogLocale} />
     <meta property="og:image" content={image} />
     <meta name="twitter:card" content="summary_large_image" />
     {noindex && <meta name="robots" content="noindex" />}
@@ -71,7 +76,7 @@ const jsonLd = article
   </head>
   <body>
     <a class="skip-link" href="#main">
-      跳到主要内容
+      {ui.common.skipToContent}
     </a>
     <Header />
     <main id="main">

@@ -571,16 +571,16 @@ button {
   color: var(--ink);
   background: var(--cloud);
 }
-.category-工程 {
+.category-engineering {
   background: var(--cloud);
 }
-.category-设计 {
+.category-design {
   background: var(--lilac);
 }
-.category-随笔 {
+.category-thoughts {
   background: var(--gold);
 }
-.category-工具 {
+.category-toolbox {
   background: var(--mint);
 }
 .card-body h3 {

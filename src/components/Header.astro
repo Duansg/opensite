@@ -2,19 +2,20 @@
 import Icon from './Icon.astro';
 import PixelPortrait from './PixelPortrait.astro';
 import { site } from '../config';
+import { ui, formatMessage } from '../i18n';
 const [brandLead, ...brandRest] = site.name.split('.');
 const path = Astro.url.pathname;
 const links = [
-  { href: '/', label: '首页', en: 'HOME' },
-  { href: '/blog/', label: '文章', en: 'WRITING' },
-  { href: '/archive/', label: '归档', en: 'ARCHIVE' },
-  { href: '/about/', label: '关于', en: 'ABOUT' },
+  { href: '/', ...ui.nav.home },
+  { href: '/blog/', ...ui.nav.writing },
+  { href: '/archive/', ...ui.nav.archive },
+  { href: '/about/', ...ui.nav.about },
 ];
 ---
 
 <header class="site-header sky-grid">
-  <nav class="wrap nav" aria-label="主导航">
-    <a href="/" class="logo" aria-label={`${site.name} 首页`}>
+  <nav class="wrap nav" aria-label={ui.nav.label}>
+    <a href="/" class="logo" aria-label={formatMessage(ui.nav.homeLabel, { name: site.name })}>
       <PixelPortrait />
       {brandLead}
       {brandRest.length > 0 && (
@@ -37,22 +38,24 @@ const links = [
           }
         >
           {link.label}
-          <span>{link.en}</span>
+          {link.caption !== link.label.toUpperCase() && <span>{link.caption}</span>}
         </a>
       ))}
     </div>
     <div class="nav-actions">
-      <button class="search-toggle icon-button" aria-label="搜索文章" data-search-open>
+      <button class="search-toggle icon-button" aria-label={ui.nav.search} data-search-open>
         <Icon name="search" />
         <kbd>⌘ K</kbd>
       </button>
       <a class="btn dark nav-rss" href="/rss.xml">
         <Icon name="rss" size={15} />
-        订阅 RSS
+        {ui.common.subscribeRss}
       </a>
       <button
         class="icon-button mobile-toggle"
-        aria-label="打开导航"
+        aria-label={ui.nav.open}
+        data-label-open={ui.nav.open}
+        data-label-close={ui.nav.close}
         aria-controls="mobile-menu"
         aria-expanded="false"
       >
@@ -64,11 +67,11 @@ const links = [
     {links.map((link) => (
       <a href={link.href}>
         {link.label}
-        <span class="label">{link.en}</span>
+        {link.caption !== link.label.toUpperCase() && <span class="label">{link.caption}</span>}
       </a>
     ))}
     <a href="/rss.xml">
-      订阅 RSS <Icon name="rss" size={16} />
+      {ui.common.subscribeRss} <Icon name="rss" size={16} />
     </a>
   </div>
 </header>
@@ -79,7 +82,10 @@ const links = [
     if (!menu) return;
     const expanded = toggle.getAttribute('aria-expanded') === 'true';
     toggle.setAttribute('aria-expanded', String(!expanded));
-    toggle.setAttribute('aria-label', expanded ? '打开导航' : '关闭导航');
+    toggle.setAttribute(
+      'aria-label',
+      (expanded ? toggle.dataset.labelOpen : toggle.dataset.labelClose) || '',
+    );
     menu.hidden = expanded;
   });
 </script>

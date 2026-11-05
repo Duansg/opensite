@@ -2,7 +2,8 @@
 title: '小屏幕，大体验：把响应式设计做进细节'
 description: '移动端不只是把三列变成一列。阅读节奏、触控范围与内容优先级，都需要重新考虑。'
 date: 2026-10-18
-category: '设计'
+lang: 'zh-CN'
+category: 'design'
 tags: ['响应式', '设计', 'CSS']
 demo: true
 cover: 'window'

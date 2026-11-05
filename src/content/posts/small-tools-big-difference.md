@@ -2,7 +2,8 @@
 title: '让工作流更轻一点的几个小习惯'
 description: '不追逐复杂的工具箱，从命名、快捷操作和一份朴素的笔记开始，减少每天重复的摩擦。'
 date: 2026-10-24
-category: '工具'
+lang: 'zh-CN'
+category: 'toolbox'
 tags: ['工作流', '效率', '构建笔记']
 demo: true
 cover: 'terminal'

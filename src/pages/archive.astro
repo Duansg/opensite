@@ -3,18 +3,21 @@ import Base from '../layouts/Base.astro';
 import Sidebar from '../components/Sidebar.astro';
 import Icon from '../components/Icon.astro';
 import { getPosts, postUrl } from '../lib/posts';
+import { locale } from '../config';
+import { ui, formatCount } from '../i18n';
 const posts = await getPosts();
 const years = [...new Set(posts.map((post) => post.data.date.getUTCFullYear()))];
 ---
 
-<Base title="文章归档">
+<Base title={ui.archive.title}>
   <section class="page-hero sky-grid">
     <div class="wrap">
-      <span class="label">EVERY IDEA LEAVES A TRACE / 时间胶囊</span>
+      <span class="label">{ui.archive.kicker}</span>
       <h1 class="page-heading">
-        THE ARCHIVE<span class="outline">.</span>
+        {ui.archive.heading}
+        <span class="outline">.</span>
       </h1>
-      <p>{posts.length} 篇文章，一段持续生长的记录。沿着时间线，找回一个想法。</p>
+      <p>{formatCount(ui.archive.description, posts.length, locale)}</p>
     </div>
   </section>
   <section class="wrap section">
@@ -25,7 +28,11 @@ const years = [...new Set(posts.map((post) => post.data.date.getUTCFullYear()))]
             <h2 class="archive-year">
               {year}
               <small>
-                {posts.filter((post) => post.data.date.getUTCFullYear() === year).length} STORIES
+                {formatCount(
+                  ui.common.storyCount,
+                  posts.filter((post) => post.data.date.getUTCFullYear() === year).length,
+                  locale,
+                )}
               </small>
             </h2>
             {posts
@@ -36,9 +43,10 @@ const years = [...new Set(posts.map((post) => post.data.date.getUTCFullYear()))]
                     {post.data.date.toISOString().slice(5, 10).replace('-', ' / ')}
                   </time>
                   <div>
-                    <h3>{post.data.title}</h3>
+                    <h3 lang={post.data.lang}>{post.data.title}</h3>
                     <span class="label">
-                      {post.data.category} · {post.data.tags.map((tag) => `#${tag}`).join(' ')}
+                      {ui.categories[post.data.category].label} ·{' '}
+                      {post.data.tags.map((tag) => `#${tag}`).join(' ')}
                     </span>
                   </div>
                   <Icon name="external" />

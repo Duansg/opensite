@@ -1,34 +1,39 @@
 ---
 import Icon from './Icon.astro';
+import { ui } from '../i18n';
 ---
 
-<dialog class="search-dialog" aria-labelledby="search-heading">
+<dialog
+  class="search-dialog"
+  aria-labelledby="search-heading"
+  data-messages={JSON.stringify(ui.search)}
+>
   <div class="search-top">
     <span id="search-heading" class="label">
-      FIND SOMETHING GOOD / 搜索
+      {ui.search.heading}
     </span>
-    <button class="icon-button" data-search-close aria-label="关闭搜索">
+    <button class="icon-button" data-search-close aria-label={ui.search.close}>
       <Icon name="close" />
     </button>
   </div>
   <form role="search" class="search-form">
     <Icon name="search" />
     <label class="sr-only" for="global-search">
-      搜索文章全文、标题或标签
+      {ui.search.label}
     </label>
     <input
       id="global-search"
       type="search"
-      placeholder="搜一个想法、关键词或标签…"
+      placeholder={ui.search.placeholder}
       autocomplete="off"
     />
-    <kbd>ESC</kbd>
+    <kbd>{ui.search.escapeKey}</kbd>
   </form>
   <div id="search-results" class="search-results" aria-live="polite">
-    <p class="search-hint">输入关键词，探索这个小小的数字花园。</p>
+    <p class="search-hint">{ui.search.hint}</p>
   </div>
   <div class="search-bottom label">
-    全文搜索 · 支持中文 <span>↑ ↓ 浏览 · ENTER 打开</span>
+    {ui.search.help} <span>{ui.search.keyboard}</span>
   </div>
 </dialog>
 <script>

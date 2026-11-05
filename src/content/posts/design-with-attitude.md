@@ -2,7 +2,8 @@
 title: '设计不必那么乖：像素与新野兽派的碰撞'
 description: '直角、粗线条、毫不掩饰的硬阴影。用更少的修饰，做出更有性格的界面。'
 date: 2026-11-02
-category: '设计'
+lang: 'zh-CN'
+category: 'design'
 tags: ['Neo-brutalism', '像素艺术', '设计']
 demo: true
 cover: 'blocks'

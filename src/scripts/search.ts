@@ -1,7 +1,11 @@
+import { formatCount } from '../i18n/format';
+import type { Messages } from '../i18n/types';
+
 type SearchPost = {
   title: string;
   description: string;
   category: string;
+  lang?: string;
   tags: string[];
   body: string;
   url: string;
@@ -11,6 +15,8 @@ export function initSearch() {
   const input = document.querySelector<HTMLInputElement>('#global-search');
   const results = document.querySelector<HTMLElement>('#search-results');
   if (!dialog || !input || !results) return;
+  const messages: Messages['search'] = JSON.parse(dialog.dataset.messages!);
+  const locale = document.documentElement.lang;
   let index: Promise<SearchPost[]> | undefined;
   let request = 0;
   let lastFocus: HTMLElement | null = null;
@@ -64,10 +70,10 @@ export function initSearch() {
     const query = input.value.trim().toLocaleLowerCase();
     results.replaceChildren();
     if (!query) {
-      results.textContent = '输入关键词，探索这个小小的数字花园。';
+      results.textContent = messages.hint;
       return;
     }
-    results.textContent = '搜索中…';
+    results.textContent = messages.loading;
     try {
       const data = await loadIndex();
       if (currentRequest !== request) return;
@@ -87,12 +93,12 @@ export function initSearch() {
         );
       results.replaceChildren();
       if (!matches.length) {
-        results.textContent = '没有找到相关文章，试试其他关键词。';
+        results.textContent = messages.empty;
         return;
       }
       const count = document.createElement('p');
       count.className = 'label search-count';
-      count.textContent = `${matches.length} 篇文章`;
+      count.textContent = formatCount(messages.count, matches.length, locale);
       results.append(count);
       matches.forEach((post) => {
         const link = document.createElement('a');
@@ -102,15 +108,16 @@ export function initSearch() {
         category.className = 'label';
         category.textContent = `${post.category} ↗`;
         const title = document.createElement('strong');
+        if (post.lang) title.lang = post.lang;
         title.textContent = post.title;
         const description = document.createElement('p');
+        if (post.lang) description.lang = post.lang;
         description.textContent = post.description;
         link.append(category, title, description);
         results.append(link);
       });
     } catch {
-      if (currentRequest === request)
-        results.textContent = '搜索暂时不可用，请稍后重试，或前往文章归档浏览。';
+      if (currentRequest === request) results.textContent = messages.unavailable;
     }
   });
   dialog.addEventListener('keydown', (event) => {

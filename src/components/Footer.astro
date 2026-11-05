@@ -1,41 +1,43 @@
 ---
 import { site } from '../config';
 import Icon from './Icon.astro';
+import { ui } from '../i18n';
 ---
 
 <section class="rss-banner">
   <div class="wrap rss-inner">
     <div>
-      <span class="label">GOOD IDEAS, NO ALGORITHM.</span>
+      <span class="label">{ui.footer.kicker}</span>
       <h2>
-        KEEP IN THE LOOP<span class="sky-dot">.</span>
+        {ui.footer.heading}
+        <span class="sky-dot">.</span>
       </h2>
-      <p>跳过信息流，在你的 RSS 阅读器里见。</p>
+      <p>{ui.footer.description}</p>
     </div>
     <a href="/rss.xml" class="btn dark">
       <Icon name="rss" size={18} />
-      订阅这个博客 <Icon name="external" size={18} />
+      {ui.footer.subscribe} <Icon name="external" size={18} />
     </a>
   </div>
 </section>
 <footer class="wrap footer">
   <a class="footer-brand" href="/">
     {site.name}
-    <span class="label">一个想法，一个像素。</span>
+    <span class="label">{ui.footer.tagline}</span>
   </a>
   <div class="footer-links">
     <a href={site.github} target="_blank" rel="noopener noreferrer">
-      GITHUB ↗
+      {ui.footer.github}
     </a>
-    <a href="/rss.xml">RSS ↗</a>
-    <a href="/about/">ABOUT ↗</a>
+    <a href="/rss.xml">{ui.footer.rss}</a>
+    <a href="/about/">{ui.footer.about}</a>
   </div>
   <div class="footer-bottom label">
     <span>
-      © {new Date().getFullYear()} {site.author} · BUILT WITH CURIOSITY
+      © {new Date().getFullYear()} {site.author} · {ui.footer.built}
     </span>
     <span>
-      ASTRO × CLOUDFLARE <span class="status-pixel"></span>
+      {ui.footer.stack} <span class="status-pixel"></span>
     </span>
   </div>
 </footer>

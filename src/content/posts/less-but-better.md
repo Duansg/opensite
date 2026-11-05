@@ -2,7 +2,8 @@
 title: '少一点输入，多一点动手'
 description: '收藏夹越来越长，真正完成的东西却很少。试着从信息消费者，走向一个小小的创造者。'
 date: 2026-10-29
-category: '随笔'
+lang: 'zh-CN'
+category: 'thoughts'
 tags: ['创造', '日常', '灵感']
 demo: true
 cover: 'coffee'
